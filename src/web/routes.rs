@@ -1,26 +1,30 @@
 /// Arquivo para gerenciar routas e handlers.
 use axum::{
-    extract::{
-        ws::{WebSocket, WebSocketUpgrade},
-        State,
-    },
+    extract::{ws::WebSocketUpgrade, State},
     response::{Html, IntoResponse, Response},
     routing::get,
     Router,
 };
+
+use tokio::sync::broadcast;
+
+use std::collections::HashSet;
 use std::fs;
+
+use crate::web::socket::{websocket, AppState};
 
 const PATH_TO_HTML: &str = "src/web/templates/";
 
 pub fn all_routes() -> Router {
+    let users: HashSet<String> = HashSet::new();
+    let (tx, _rx) = broadcast::channel(100);
+
+    let app_state = AppState { users, tx };
     Router::new()
         .route("/", get(index))
-        .route("/ws", get(handler))
-        .with_state(AppState { /* ... */ })
+        .route("/ws", get(websocket_handler))
+        .with_state(app_state)
 }
-
-#[derive(Clone)]
-struct AppState {}
 
 // Handlers
 async fn index() -> impl IntoResponse {
@@ -32,23 +36,6 @@ async fn index() -> impl IntoResponse {
     Html(html_content)
 }
 
-async fn handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> Response {
-    ws.on_upgrade(|socket| handle_socket(socket, state))
-}
-
-async fn handle_socket(mut socket: WebSocket, state: AppState) {
-    while let Some(msg) = socket.recv().await {
-        let msg = if let Ok(msg) = msg {
-            println!("Mensagem {:?}", msg);
-            msg
-        } else {
-            // client disconnected
-            return;
-        };
-
-        if socket.send(msg).await.is_err() {
-            // client disconnected
-            return;
-        }
-    }
+async fn websocket_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> Response {
+    ws.on_upgrade(|socket| websocket(socket, state))
 }

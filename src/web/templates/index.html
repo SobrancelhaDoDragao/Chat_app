@@ -25,6 +25,11 @@
       console.log("Conexão WebSocket aberta");
       socket.send('Olá, servidor!');
     })
+
+    // Evento chamado quando uma mensagem é recebida do servidor
+    socket.addEventListener('message', (event) => {
+      console.log(`${event.data}`);
+    });
   </script>
 </body>
 
