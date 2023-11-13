@@ -6,9 +6,6 @@ use axum::{
     Router,
 };
 
-use tokio::sync::broadcast;
-
-use std::collections::HashSet;
 use std::fs;
 
 use crate::web::socket::{websocket, AppState};
@@ -16,18 +13,16 @@ use crate::web::socket::{websocket, AppState};
 const PATH_TO_HTML: &str = "src/web/templates/";
 
 pub fn all_routes() -> Router {
-    let users: HashSet<String> = HashSet::new();
-    let (tx, _rx) = broadcast::channel(100);
+    let app_state = AppState::new();
 
-    let app_state = AppState { users, tx };
     Router::new()
-        .route("/", get(index))
+        .route("/", get(index_handler))
         .route("/ws", get(websocket_handler))
         .with_state(app_state)
 }
 
 // Handlers
-async fn index() -> impl IntoResponse {
+async fn index_handler() -> impl IntoResponse {
     let html_file: &str = "index.html";
 
     let html_content = fs::read_to_string(format!("{}{}", PATH_TO_HTML, html_file))

@@ -1,3 +1,4 @@
+/// Arquivo para gerenciar websocket e states
 use axum::extract::ws::{Message, WebSocket};
 use std::collections::HashSet;
 use tokio::sync::broadcast;
@@ -6,6 +7,15 @@ use tokio::sync::broadcast;
 pub struct AppState {
     pub users: HashSet<String>,
     pub tx: broadcast::Sender<String>,
+}
+
+impl AppState {
+    pub fn new() -> AppState {
+        let users: HashSet<String> = HashSet::new();
+        let (tx, _rx) = broadcast::channel(100);
+
+        AppState { users, tx }
+    }
 }
 
 pub async fn websocket(mut socket: WebSocket, state: AppState) {

@@ -1,3 +1,4 @@
+//! projeto com o intuito de criar um chat app em Rust com Websockets
 use axum::Router;
 use dotenv::dotenv;
 use log::info;
