@@ -1,34 +1,54 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
-  <title>Chat app</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    h1,
-    p {
-      text-align: center;
-    }
-  </style>
-  <!-- <link href="css/style.css" rel="stylesheet"> -->
+  <title>WebSocket Chat</title>
 </head>
 
 <body>
-  <h1>Chat app</h1>
+  <h1>WebSocket Chat Example</h1>
 
-  <p>Chat app with Rust</p>
+  <input id="username" style="display:block; width:100px; box-sizing: border-box" type="text" placeholder="username">
+  <button id="join-chat" type="button">Join Chat</button>
+  <textarea id="chat" style="display:block; width:600px; height:400px; box-sizing: border-box" cols="30"
+    rows="10"></textarea>
+  <input id="input" style="display:block; width:600px; box-sizing: border-box" type="text" placeholder="chat">
+
   <script>
-    const socket = new WebSocket('ws:127.0.0.1:8080/ws');
+    const username = document.querySelector("#username");
+    const join_btn = document.querySelector("#join-chat");
+    const textarea = document.querySelector("#chat");
+    const input = document.querySelector("#input");
 
-    socket.addEventListener('open', (event) => {
-      console.log("Conexão WebSocket aberta");
-      socket.send('Olá, servidor!');
-    })
+    join_btn.addEventListener("click", function (e) {
+      this.disabled = true;
 
-    // Evento chamado quando uma mensagem é recebida do servidor
-    socket.addEventListener('message', (event) => {
-      console.log(`${event.data}`);
+      const websocket = new WebSocket("ws:127.0.0.1:8080/ws");
+
+      websocket.onopen = function () {
+        console.log("connection opened");
+        websocket.send(username.value);
+      }
+
+      const btn = this;
+
+      websocket.onclose = function () {
+        console.log("connection closed");
+        btn.disabled = false;
+      }
+
+      websocket.onmessage = function (e) {
+        console.log("received message: " + e.data);
+        textarea.value += e.data + "\r\n";
+      }
+
+      input.onkeydown = function (e) {
+        if (e.key == "Enter") {
+          websocket.send(input.value);
+          input.value = "";
+        }
+      }
     });
   </script>
 </body>

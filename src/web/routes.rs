@@ -6,14 +6,14 @@ use axum::{
     Router,
 };
 
-use std::fs;
+use std::{fs, sync::Arc};
 
 use crate::web::socket::{websocket, AppState};
 
 const PATH_TO_HTML: &str = "src/web/templates/";
 
 pub fn all_routes() -> Router {
-    let app_state = AppState::new();
+    let app_state = Arc::new(AppState::new());
 
     Router::new()
         .route("/", get(index_handler))
@@ -31,6 +31,6 @@ async fn index_handler() -> impl IntoResponse {
     Html(html_content)
 }
 
-async fn websocket_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> Response {
+async fn websocket_handler(ws: WebSocketUpgrade, State(state): State<Arc<AppState>>) -> Response {
     ws.on_upgrade(|socket| websocket(socket, state))
 }
