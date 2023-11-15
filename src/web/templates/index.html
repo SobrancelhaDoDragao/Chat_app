@@ -3,17 +3,52 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>WebSocket Chat</title>
+  <title>Chat App</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    #conteiner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      gap: .5rem;
+      height: 90%;
+    }
+
+    input,
+    textarea {
+      width: 50%;
+      padding: 10px;
+      border: 2px solid gray;
+      border-radius: 20px;
+    }
+
+    textarea {
+      height: 100%;
+    }
+
+    button {
+      padding: 10px;
+      border-radius: 20px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>WebSocket Chat Example</h1>
+  <div id="conteiner">
 
-  <input id="username" style="display:block; width:100px; box-sizing: border-box" type="text" placeholder="username">
-  <button id="join-chat" type="button">Join Chat</button>
-  <textarea id="chat" style="display:block; width:600px; height:400px; box-sizing: border-box" cols="30"
-    rows="10"></textarea>
-  <input id="input" style="display:block; width:600px; box-sizing: border-box" type="text" placeholder="chat">
+    <h1>Chat App</h1>
+
+    <input id="username" type="text" placeholder="Your username">
+    <button id="join-chat" type="button">Join Chat</button>
+    <textarea id="chat" cols="30" rows="10"></textarea>
+    <input id="input" type="text" placeholder="chat">
+  </div>
 
   <script>
     const username = document.querySelector("#username");
