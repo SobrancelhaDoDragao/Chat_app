@@ -21,22 +21,22 @@ impl AppState {
     }
 }
 
-pub async fn websocket(mut stream: WebSocket, state: Arc<AppState>) {
+pub async fn websocket(stream: WebSocket, state: Arc<AppState>) {
     // By splitting, we can send and receive at the same time.
     let (mut sender, mut receiver) = stream.split();
     let mut username = String::new();
 
-    // A primeira mensagem do websocket e o nome do usuario sendo enviado
+    // A primeira mensagem do websocket é o nome do usuario sendo enviado
     while let Some(Ok(message)) = receiver.next().await {
         if let Message::Text(name) = message {
-            let mut user_set = state.users.lock().unwrap();
-            username.push_str(&name);
-            user_set.insert(name.to_owned());
+            check_username(&state, &mut username, &name);
 
             if !username.is_empty() {
                 break;
             } else {
-                let _ = sender.send(Message::Text(String::from("Username already taken.")));
+                let _ = sender
+                    .send(Message::Text(String::from("Username already taken.")))
+                    .await;
 
                 return;
             }
@@ -52,9 +52,8 @@ pub async fn websocket(mut stream: WebSocket, state: Arc<AppState>) {
 
     let _ = state.tx.send(msg);
 
-    // Spawn the first task that will receive broadcast messages and send text
-    // mesages over the websocket to our client.
-    tokio::spawn(async move {
+    // Esperando mensagem serem enviadas para o state para depois serem enviadas para o usuario.
+    let mut from_state_to_user = tokio::spawn(async move {
         while let Ok(msg) = rx.recv().await {
             // In any webscoket error, break loop
             if sender.send(Message::Text(msg)).await.is_err() {
@@ -63,15 +62,38 @@ pub async fn websocket(mut stream: WebSocket, state: Arc<AppState>) {
         }
     });
 
-    // Nome defido agora o chat é iniciado
     // Para manter onwnership
     let tx = state.tx.clone();
     let name = username.clone();
 
-    tokio::spawn(async move {
+    // Enviando mensagem para o broadcast do state
+    let mut from_user_to_state = tokio::spawn(async move {
         while let Some(Ok(Message::Text(text))) = receiver.next().await {
             // add username before message
             let _ = tx.send(format!("{name}: {text}"));
         }
     });
+
+    // If any one of the task run to completion, we abort the other.
+    tokio::select! {
+        _ = (&mut from_state_to_user) => from_user_to_state.abort(),
+        _ = (&mut from_user_to_state) => from_state_to_user.abort(),
+    }
+
+    // Send "user left" message
+    let msg = format!("{username} left");
+    let _ = state.tx.send(msg);
+
+    // Remove username from map
+    state.users.lock().unwrap().remove(&username);
+}
+
+fn check_username(state: &AppState, string: &mut String, name: &str) {
+    let mut user_set = state.users.lock().unwrap();
+
+    if !user_set.contains(name) {
+        user_set.insert(name.to_owned());
+
+        string.push_str(name);
+    }
 }
