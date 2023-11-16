@@ -22,5 +22,9 @@ Durante o desenvolvimento deste projeto, adquiri conhecimentos sólidos em Rust,
 
 ### Requisitos
 - Rust 1.73
-Em andamento
+  
+#### Instalando projeto
+- <code>cargo run --release</code>
+
+
 
