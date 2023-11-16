@@ -7,6 +7,8 @@ Colocar aqui uma imagem ou video do projeto
 ## Sobre o projeto
 O projeto é um chat online multithread desenvolvido em Rust, utilizando as bibliotecas Tokio e Axum para implementar a comunicação via websockets. Esta aplicação proporciona uma experiência interativa de chat, destacando-se pelo seu design robusto e eficiente, aproveitando as características poderosas da linguagem Rust. 
 
+Durante o desenvolvimento deste projeto, adquiri conhecimentos sólidos em Rust, explorando sua capacidade de lidar com concorrência de forma eficaz, e aprofundei minha compreensão sobre o uso de websockets para criar aplicações interativas na web.
+
 ## Tecnologias Utilizadas
 - Rust
 - Tokio (para programação assíncrona)
