@@ -20,21 +20,38 @@
       height: 90%;
     }
 
-    input,
-    textarea {
+    #username,
+    #chat,
+    #message {
       width: 50%;
       padding: 10px;
-      border: 2px solid gray;
+      border: 2px solid #ccc;
+    }
+
+    #username {
       border-radius: 20px;
     }
 
     textarea {
+      border-radius: 20px;
+      background-color: #f8f8f8;
       height: 100%;
+      font-size: 1rem;
+      font-weight: normal;
+    }
+
+    #message {
+      border: none;
+      border-bottom: 2px solid #ccc;
     }
 
     button {
       padding: 10px;
       border-radius: 20px;
+      width: 15%;
+      border: 2px solid black;
+      padding: 10px;
+      background: #f8f8f8;
     }
   </style>
 </head>
@@ -47,14 +64,14 @@
     <input id="username" type="text" placeholder="Your username">
     <button id="join-chat" type="button">Join Chat</button>
     <textarea id="chat" cols="30" rows="10"></textarea>
-    <input id="input" type="text" placeholder="chat">
+    <input id="message" type="text" placeholder="Type your message">
   </div>
 
   <script>
     const username = document.querySelector("#username");
     const join_btn = document.querySelector("#join-chat");
     const textarea = document.querySelector("#chat");
-    const input = document.querySelector("#input");
+    const input = document.querySelector("#message");
 
     join_btn.addEventListener("click", function (e) {
       this.disabled = true;
