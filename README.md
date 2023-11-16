@@ -28,7 +28,7 @@ Durante o desenvolvimento deste projeto, adquiri conhecimentos sólidos em Rust,
     - APP_HOST=127.0.0.1
     - APP_PORT=8080
 - Caso não seja configurado será definido o host: 0.0.0.0, port: 80.
-- <code>cargo run --release</code>
+- Agora digite o comando <code>cargo run --release</code>, ira demorar um pouco para compilar.
 - Depois digite a host e a port no seu navegador de preferência.
 
 
