@@ -1,7 +1,6 @@
 //! projeto com o intuito de criar um chat app em Rust com Websockets
 use axum::Router;
 use dotenv::dotenv;
-use log::info;
 use std::env;
 
 mod web;
@@ -11,12 +10,12 @@ async fn main() {
     dotenv().ok();
     env_logger::init();
 
-    info!("Server starting...");
+    println!("Server starting...");
 
     let app_host = env::var("APP_HOST").unwrap_or("0.0.0.0".to_string());
     let app_port = env::var("APP_PORT").unwrap_or("80".to_string());
 
-    info!(
+    println!(
         "Server configured to accept connections on host {}:{}",
         app_host, app_port
     );

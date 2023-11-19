@@ -8,7 +8,7 @@ use axum::{
 
 use std::{fs, sync::Arc};
 
-use crate::web::socket::{websocket, AppState};
+use crate::web::socket::{connection, AppState};
 
 const PATH_TO_HTML: &str = "src/web/templates/";
 
@@ -32,5 +32,5 @@ async fn index_handler() -> impl IntoResponse {
 }
 
 async fn websocket_handler(ws: WebSocketUpgrade, State(state): State<Arc<AppState>>) -> Response {
-    ws.on_upgrade(|socket| websocket(socket, state))
+    ws.on_upgrade(|socket| connection(socket, state))
 }

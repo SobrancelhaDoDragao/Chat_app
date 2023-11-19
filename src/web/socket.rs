@@ -21,7 +21,7 @@ impl AppState {
     }
 }
 
-pub async fn websocket(stream: WebSocket, state: Arc<AppState>) {
+pub async fn connection(stream: WebSocket, state: Arc<AppState>) {
     // By splitting, we can send and receive at the same time.
     let (mut sender, mut receiver) = stream.split();
     let mut username = String::new();

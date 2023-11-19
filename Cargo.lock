@@ -172,7 +172,6 @@ dependencies = [
  "dotenv",
  "env_logger",
  "futures",
- "log",
  "tokio",
 ]
 
